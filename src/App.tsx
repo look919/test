@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from 'react-redux';
+import { Todo, fetchTodos, deleteTodo } from './actions';
+import { StoreState } from './reducers';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface AppProps {
+  todos: Todo[];
+  fetchTodos(): any;
+  deleteTodo(id: number): any;
 }
 
-export default App;
+const _App = ({ todos, fetchTodos, deleteTodo }: AppProps) => {
+  const handleClick = async () => {
+    await fetchTodos();
+  };
+  console.log(todos);
+  return (
+    <div>
+      <button onClick={handleClick}>Fetch</button>
+      {todos.map((todo) => (
+        <div key={todo.id} onClick={() => deleteTodo(todo.id)}>
+          {todo.title}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const mapStateToProps = (state: StoreState) => ({
+  todos: state.todos,
+});
+
+export const App = connect(mapStateToProps, { fetchTodos, deleteTodo })(_App);
